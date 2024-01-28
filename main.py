@@ -25,6 +25,7 @@ global top_p
 global top_k
 global max_new_tokens
 global system_prompt
+global channel_bind
 temperature = 0.2 # Parameters for generation, read more here: https://huggingface.co/docs/transformers/main_classes/text_generation
 repetition_penalty = 1.3
 top_p = 0.85
@@ -93,46 +94,52 @@ async def add_to_context(message, response):
 
 @client.event
 async def on_message(message):
-    global system_prompt
-    if message.content.lower().startswith(f'Hey {agent_name} '.lower()):
-        await generate(message)
+    if message.content.lower().startswith(f'{agent_name}.bindchannel'.lower()):
+        global channel_bind
+        channel_bind = message.channel
 
-    if message.content.lower().startswith(f'{agent_name}.temp='.lower()):
-        if message.author == f"{host_discord_username}":
-            global temperature
-            temperature = float(message.content[(len(agent_name)+6):])
+    if message.channel == channel_bind or channel_bind == None:
+        
+        global system_prompt
+        if message.content.lower().startswith(f'Hey {agent_name} '.lower()):
+            await generate(message)
     
-    if message.content.lower().startswith(f'{agent_name}.forget'.lower()):
-        global context
-        context.clear()
-
-    if message.content.lower().startswith(f'{agent_name}.topp='.lower()):
-        if message.author == f"{host_discord_username}":
-            global top_p
-            top_p = float(message.content[(len(agent_name)+6):])
-
-    if message.content.lower().startswith(f'{agent_name}.topk='.lower()):
-        if message.author == f"{host_discord_username}":
-            global top_k
-            top_k = float(message.content[(len(agent_name)+6):])
-
-    if message.content.lower().startswith(f'{agent_name}.reppen='.lower()):
-        if str(message.author) == f"{host_discord_username}":
-            global repetition_penalty
-            repetition_penalty = float(message.content[(len(agent_name)+8):])
-
-    if message.content.lower().startswith(f'{agent_name}.maxtok='.lower()):
-        if str(message.author) == f"{host_discord_username}":
-            global max_new_tokens
-            max_new_tokens = int(message.content[(len(agent_name)+8):])
-
-    if message.content.lower().startswith(f'{agent_name}.pprompt'.lower()):
-        if str(message.author) == f"{host_discord_username}":
-            await message.channel.send(system_prompt)
-
-    if message.content.lower().startswith(f'{agent_name}.eprompt='.lower()):
-        if str(message.author) == f"{host_discord_username}":
-            system_prompt = message.content[(len(agent_name)+9):]
-
+        if message.content.lower().startswith(f'{agent_name}.temp='.lower()):
+            if message.author == f"{host_discord_username}":
+                global temperature
+                temperature = float(message.content[(len(agent_name)+6):])
+        
+        if message.content.lower().startswith(f'{agent_name}.forget'.lower()):
+            global context
+            context.clear()
+    
+        if message.content.lower().startswith(f'{agent_name}.topp='.lower()):
+            if message.author == f"{host_discord_username}":
+                global top_p
+                top_p = float(message.content[(len(agent_name)+6):])
+    
+        if message.content.lower().startswith(f'{agent_name}.topk='.lower()):
+            if message.author == f"{host_discord_username}":
+                global top_k
+                top_k = float(message.content[(len(agent_name)+6):])
+    
+        if message.content.lower().startswith(f'{agent_name}.reppen='.lower()):
+            if str(message.author) == f"{host_discord_username}":
+                global repetition_penalty
+                repetition_penalty = float(message.content[(len(agent_name)+8):])
+    
+        if message.content.lower().startswith(f'{agent_name}.maxtok='.lower()):
+            if str(message.author) == f"{host_discord_username}":
+                global max_new_tokens
+                max_new_tokens = int(message.content[(len(agent_name)+8):])
+    
+        if message.content.lower().startswith(f'{agent_name}.pprompt'.lower()):
+            if str(message.author) == f"{host_discord_username}":
+                await message.channel.send(system_prompt)
+    
+        if message.content.lower().startswith(f'{agent_name}.eprompt='.lower()):
+            if str(message.author) == f"{host_discord_username}":
+                system_prompt = message.content[(len(agent_name)+9):]
+    
 
 client.run(bot_token)
