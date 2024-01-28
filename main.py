@@ -103,8 +103,8 @@ async def on_message(message):
             temperature = float(message.content[(len(agent_name)+6):])
     
     if message.content.lower().startswith(f'{agent_name}.forget'.lower()):
-        for x in context:
-            context.pop(0)
+        global context
+        context.clear()
 
     if message.content.lower().startswith(f'{agent_name}.topp='.lower()):
         if message.author == f"{host_discord_username}":
