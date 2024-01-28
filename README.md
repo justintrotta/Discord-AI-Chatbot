@@ -1,4 +1,4 @@
-# DiscordSPT (Single Purpose Transformer)
+# DiscordNLP Chat
 Simple implimentation of local language model within a Discord bot. Includes chat commands for on-the-fly generation parameter training
 
 # Warning 
